@@ -57,3 +57,10 @@ insmod /lib/modules/3.10.14/sensor_jxf22.ko data_interface=2 pwdn_gpio=-1 reset_
 bftpd -d
 dropbearmulti dropbear -R
 lighttpd -f /etc/lighttpd.conf
+
+# Disable motion:
+setconf -k m -v -1
+# Start RTSP-Server without Audio:
+v4l2rtspserver-master -A -W 1280 -H 96
+
+

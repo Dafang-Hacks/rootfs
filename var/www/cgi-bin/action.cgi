@@ -129,58 +129,58 @@ if [ -n "$F_cmd" ]; then
     ;;
 
     motor_left)
-      /system/sdcard/bin/motor -d l -s $F_val
+      motor -d l -s $F_val
 
       # Waiting for the motor to run.
       SLEEP_NUM=$(awk -v a="$F_val" 'BEGIN{printf ("%f",a*1.3/1000)}')
       sleep ${SLEEP_NUM//-/}
       # Display AXIS to OSD
       update_axis
-      /system/sdcard/bin/setconf -k o -v "$OSD"
+      setconf -k o -v "$OSD"
     ;;
 
     motor_right)
-      /system/sdcard/bin/motor -d r -s $F_val
+      motor -d r -s $F_val
       # Waiting for the motor to run.
       SLEEP_NUM=$(awk -v a="$F_val" 'BEGIN{printf ("%f",a*1.3/1000)}')
       sleep ${SLEEP_NUM//-/}
       # Display AXIS to OSD
       update_axis
-      /system/sdcard/bin/setconf -k o -v "$OSD"
+      setconf -k o -v "$OSD"
     ;;
 
     motor_up)
-      /system/sdcard/bin/motor -d u -s $F_val
+      motor -d u -s $F_val
       # Waiting for the motor to run.
       SLEEP_NUM=$(awk -v a="$F_val" 'BEGIN{printf ("%f",a*1.3/1000)}')
       sleep ${SLEEP_NUM//-/}
       # Display AXIS to OSD
       update_axis
-      /system/sdcard/bin/setconf -k o -v "$OSD"
+      setconf -k o -v "$OSD"
     ;;
 
     motor_down)
-      /system/sdcard/bin/motor -d d -s $F_val
+      motor -d d -s $F_val
       # Waiting for the motor to run.
       SLEEP_NUM=$(awk -v a="$F_val" 'BEGIN{printf ("%f",a*1.3/1000)}')
       sleep ${SLEEP_NUM//-/}
       # Display AXIS to OSD
       update_axis
-      /system/sdcard/bin/setconf -k o -v "$OSD"
+      setconf -k o -v "$OSD"
     ;;
 
     motor_vcalibrate)
-      /system/sdcard/bin/motor -d v -s 100
+      motor -d v -s 100
     ;;
 
     motor_hcalibrate)
-      /system/sdcard/bin/motor -d h -s 100
+      motor -d h -s 100
     ;;
 
     motor_calibrate)
       # Current motor driver does not differentiate between horizontal and vertical calibration
-      /system/sdcard/bin/motor -d h -s 100
-      # /system/sdcard/bin/motor -d v -s 100
+      motor -d h -s 100
+      # motor -d v -s 100
     ;;
     
     motor_PTZ)
@@ -192,7 +192,7 @@ if [ -n "$F_cmd" ]; then
           if [ "$F_audioSource" == "" ]; then
               F_audioSource="/usr/share/notify/CN/init_ok.wav"
           fi
-          /system/sdcard/bin/busybox nohup /system/sdcard/bin/audioplay $F_audioSource $F_audiotestVol >> "/var/log/update.log" &
+          busybox nohup audioplay $F_audioSource $F_audiotestVol >> "/var/log/update.log" &
           echo  "Play $F_audioSource at volume $F_audiotestVol"
           return
     ;;
@@ -236,7 +236,7 @@ if [ -n "$F_cmd" ]; then
         echo "<p>Setting NTP Server to '$ntp_srv'...</p>"
         echo "$ntp_srv" > /system/sdcard/config/ntp_srv.conf
         echo "<p>Syncing time on '$ntp_srv'...</p>"
-        if /system/sdcard/bin/busybox ntpd -q -n -p "$ntp_srv" > /dev/null 2>&1; then
+        if busybox ntpd -q -n -p "$ntp_srv" > /dev/null 2>&1; then
           echo "<p>Success</p>"
         else
           echo "<p>Failed</p>"
@@ -248,7 +248,7 @@ if [ -n "$F_cmd" ]; then
         echo "<p>Setting TZ to '$tz'...</p>"
         echo "$tz" > /etc/TZ
         echo "<p>Syncing time...</p>"
-        if /system/sdcard/bin/busybox ntpd -q -n -p "$ntp_srv" > /dev/null 2>&1; then
+        if busybox ntpd -q -n -p "$ntp_srv" > /dev/null 2>&1; then
           echo "<p>Success</p>"
         else echo "<p>Failed</p>"
         fi
@@ -289,29 +289,29 @@ if [ -n "$F_cmd" ]; then
       fi
 
       if [ ! -z "$enabled" ]; then
-        /system/sdcard/bin/setconf -k o -v "$osdtext"
+        setconf -k o -v "$osdtext"
         echo "OSD=\"${osdtext}\"" | sed -r 's/[ ]X=.*"/"/' >> /system/sdcard/config/osd.conf
         echo "OSD set"
       else
         echo "OSD removed"
-        /system/sdcard/bin/setconf -k o -v ""
+        setconf -k o -v ""
         echo "OSD=\"\" " >> /system/sdcard/config/osd.conf
       fi
 
       echo "COLOR=${F_color}" >> /system/sdcard/config/osd.conf
-      /system/sdcard/bin/setconf -k c -v "${F_color}"
+      setconf -k c -v "${F_color}"
 
       echo "SIZE=${F_size}" >> /system/sdcard/config/osd.conf
-      /system/sdcard/bin/setconf -k s -v "${F_size}"
+      setconf -k s -v "${F_size}"
 
       echo "POSY=${F_posy}" >> /system/sdcard/config/osd.conf
-      /system/sdcard/bin/setconf -k x -v "${F_posy}"
+      setconf -k x -v "${F_posy}"
 
       echo "FIXEDW=${F_fixedw}" >> /system/sdcard/config/osd.conf
-      /system/sdcard/bin/setconf -k w -v "${F_fixedw}"
+      setconf -k w -v "${F_fixedw}"
 
       echo "SPACE=${F_spacepixels}" >> /system/sdcard/config/osd.conf
-      /system/sdcard/bin/setconf -k p -v "${F_spacepixels}"
+      setconf -k p -v "${F_spacepixels}"
       return
     ;;
 
@@ -332,21 +332,21 @@ if [ -n "$F_cmd" ]; then
     ;;
 
     toggle-rtsp-nightvision-on)
-      /system/sdcard/bin/setconf -k n -v 1
+      setconf -k n -v 1
     ;;
 
     toggle-rtsp-nightvision-off)
-      /system/sdcard/bin/setconf -k n -v 0
+      setconf -k n -v 0
     ;;
 
     flip-on)
       rewrite_config /system/sdcard/config/rtspserver.conf FLIP "ON"
-      /system/sdcard/bin/setconf -k f -v 1
+      setconf -k f -v 1
     ;;
 
     flip-off)
       rewrite_config /system/sdcard/config/rtspserver.conf FLIP "OFF"
-      /system/sdcard/bin/setconf -k f -v 0
+      setconf -k f -v 0
     ;;
 
     motion_detection_on)
@@ -357,12 +357,12 @@ if [ -n "$F_cmd" ]; then
         if [ $motion_sensitivity -eq -1 ]; then
              motion_sensitivity=4
         fi
-        /system/sdcard/bin/setconf -k m -v $motion_sensitivity
+        setconf -k m -v $motion_sensitivity
         rewrite_config /system/sdcard/config/motion.conf motion_sensitivity $motion_sensitivity
     ;;
 
     motion_detection_off)
-      /system/sdcard/bin/setconf -k m -v -1
+      setconf -k m -v -1
     ;;
 
     set_video_size)
@@ -392,7 +392,7 @@ if [ -n "$F_cmd" ]; then
       echo "Video resolution set to $video_size<br/>"
       echo "Bitrate set to $brbitrate<br/>"
       echo "FrameRate set to $frmRateDen/$frmRateNum <br/>"
-      /system/sdcard/bin/setconf -k d -v "$frmRateNum,$frmRateDen" 2>/dev/null
+      setconf -k d -v "$frmRateNum,$frmRateDen" 2>/dev/null
       echo "Video format set to $video_format<br/>"
 
       if [ "$(rtsp_h264_server status)" = "ON" ]; then
@@ -414,16 +414,16 @@ if [ -n "$F_cmd" ]; then
         if [ "${F_motion_tracking}X" == "X" ]
         then
             rewrite_config /system/sdcard/config/motion.conf motion_tracking off
-             /system/sdcard/bin/setconf -k t -v off
+             setconf -k t -v off
         else
             rewrite_config /system/sdcard/config/motion.conf motion_tracking on
-            /system/sdcard/bin/setconf -k t -v on
+            setconf -k t -v on
         fi
 
-        /system/sdcard/bin/setconf -k r -v ${F_x0},${F_y0},${F_x1},${F_y1}
-        /system/sdcard/bin/setconf -k m -v ${F_motion_sensitivity}
-        /system/sdcard/bin/setconf -k z -v ${F_motion_indicator_color}
-        /system/sdcard/bin/setconf -k u -v ${F_motion_timeout}
+        setconf -k r -v ${F_x0},${F_y0},${F_x1},${F_y1}
+        setconf -k m -v ${F_motion_sensitivity}
+        setconf -k z -v ${F_motion_indicator_color}
+        setconf -k u -v ${F_motion_timeout}
 
         # Changed the detection region, need to restart the server
         if [ ${F_restart_server} == "1" ]
@@ -507,10 +507,10 @@ if [ -n "$F_cmd" ]; then
        echo "High Pass Filter $F_HFEnabled <BR>"
        echo "AEC Filter $F_AECEnabled <BR>"
        echo  "Volume $F_audioinVol <BR>"
-       /system/sdcard/bin/setconf -k q -v "$F_audioinFilter" 2>/dev/null
-       /system/sdcard/bin/setconf -k l -v "$F_HFEnabled" 2>/dev/null
-       /system/sdcard/bin/setconf -k a -v "$F_AECEnabled" 2>/dev/null
-       /system/sdcard/bin/setconf -k h -v "$F_audioinVol" 2>/dev/null
+       setconf -k q -v "$F_audioinFilter" 2>/dev/null
+       setconf -k l -v "$F_HFEnabled" 2>/dev/null
+       setconf -k a -v "$F_AECEnabled" 2>/dev/null
+       setconf -k h -v "$F_audioinVol" 2>/dev/null
        return
      ;;
      update)
@@ -520,9 +520,9 @@ if [ -n "$F_cmd" ]; then
             echo "===============" >> /system/sdcard/log/update.log
             date >> /var/log/update.log
             if [ "$F_login" != "" ]; then
-                /system/sdcard/bin/busybox nohup /system/sdcard/autoupdate.sh -s -v -f -u $F_login  >> "/system/sdcard/log/update.log" &
+                busybox nohup /system/sdcard/autoupdate.sh -s -v -f -u $F_login  >> "/system/sdcard/log/update.log" &
             else
-                /system/sdcard/bin/busybox nohup /system/sdcard/autoupdate.sh -s -v -f >> "/system/sdcard/log/update.log" &
+                busybox nohup /system/sdcard/autoupdate.sh -s -v -f >> "/system/sdcard/log/update.log" &
             fi
             processId=$(ps | grep autoupdate.sh | grep -v grep)
         fi

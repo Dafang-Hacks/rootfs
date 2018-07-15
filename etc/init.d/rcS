@@ -46,3 +46,4 @@ wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -P /var/run/wpa_supplican
 udhcpc -i wlan0 -p /var/run/udhcpc.pid -s /etc/udhcpc.script -b -x hostname:"$(hostname)"
 bftpd -d
 dropbearmulti dropbear -R
+lighttpd -f /etc/lighttpd.conf

@@ -37,13 +37,22 @@ echo 1 > value         #设置电平（输出模式）
 mount -t jffs2 /dev/mtdblock9 /params
 
 
-Run init script
 
+# Start Network:
 mount /dev/mmcblk0p1 /system/sdcard
 MAC=$(grep MAC < /params/config/.product_config | cut -c16-27 | sed 's/\(..\)/\1:/g;s/:$//')
 insmod /lib/modules/3.10.14/rtl8189es.ko rtw_initmac="$MAC"
 wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -P /var/run/wpa_supplicant.pid
 udhcpc -i wlan0 -p /var/run/udhcpc.pid -s /etc/udhcpc.script -b -x hostname:"$(hostname)"
+
+# Start Motor:
+insmod /lib/modules/3.10.14/sample_motor.ko
+
+# Start Sensor:
+insmod /lib/modules/3.10.14/tx-isp.ko isp_clk=100000000
+insmod /lib/modules/3.10.14/sensor_jxf22.ko data_interface=2 pwdn_gpio=-1 reset_gpio=18 sensor_gpio_func=0
+
+# Start User Applications:
 bftpd -d
 dropbearmulti dropbear -R
 lighttpd -f /etc/lighttpd.conf

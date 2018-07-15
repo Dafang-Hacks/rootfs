@@ -40,10 +40,9 @@ mount -t jffs2 /dev/mtdblock9 /params
 Run init script
 
 mount /dev/mmcblk0p1 /system/sdcard
-CONFIGPATH="/system/sdcard/config"
 MAC=$(grep MAC < /params/config/.product_config | cut -c16-27 | sed 's/\(..\)/\1:/g;s/:$//')
 insmod /lib/modules/3.10.14/rtl8189es.ko rtw_initmac="$MAC"
-wpa_supplicant -B -i wlan0 -c $CONFIGPATH/wpa_supplicant.conf -P /var/run/wpa_supplicant.pid
-udhcpc -i wlan0 -p /var/run/udhcpc.pid -b -x hostname:"$(hostname)"
-/system/sdcard/bin/bftpd -d
-
+wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -P /var/run/wpa_supplicant.pid
+udhcpc -i wlan0 -p /var/run/udhcpc.pid -s /etc/udhcpc.script -b -x hostname:"$(hostname)"
+bftpd -d
+dropbearmulti dropbear -R

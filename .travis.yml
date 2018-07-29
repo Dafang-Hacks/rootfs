@@ -1,15 +1,10 @@
 language: generic
-
 sudo: required
-
-script: ./build/createimage.sh
-
+script: "./build/createimage.sh"
 deploy:
   provider: releases
   api_key:
-    secure: YOUR_API_KEY_ENCRYPTED
-  file:
-    - "image.bin"
-  skip_cleanup: true
+    secure: cDOEAh5I7c/daciU/PU/O6SJjux3MrCBH6wwxTg0klukaaR/qiG9xkOrOL7bknKWDzzIVVYbP5lp1gYEf0wVQ7ClJTE1u1COgJhN/qVOG7eRztu4keshoKh07YIHejCBglU7jHQ0KoffJBjJvf9tly+bTdbM2xLmaJUpx3HxKaSaqRFlDkjd7R31eIVZm5MSwI4JJCWOURuJ1yQ3xL5MtcylrIUxn0884c+B54JxHryvu+ZnVXcr1SZfZWahCOiqIuDfOVQZfftXkiZjlsgWgVbG8a1vOr96xLnTOWnnqcSXGVzlqOJagVJEyUOcxtp3wMMtsmEwIpseRDfqTpUv14LZJbs3WnPv66BWvJAwrhYiltsznx8FxfH3MbbwuIW8kdvlNL42nzoqV8uEk4G4ZIzA+gRTqs1KbSCyIzyTI91BUO0KOmjKnSAJrJcypuMP+qPY23wp7Loai/JxSlfDV0fS2i0Nkdb3wHTQlujSYopOvHQnQu7ePGHY7V/F9F2LeRhTvRYYbtrm/JGGVa0Qdjv8W3OGRSox8HAnZq7CfbEvMxppZkVx/YyUS2VogH4KAlH+cTwdy3nqAxGhjnPs/tRverEah5KbiUeEZRCs0ihnUtPAz8wMoiAa3MLntHlUBub+CWR5vGW5+AcOTsQ6/4q/IS+nRlinf2pNIv0yoCA=
+  file: image.bin
   on:
-    tags: true
+    repo: Dafang-Hacks/rootfs

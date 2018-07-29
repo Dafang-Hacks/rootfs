@@ -1,1 +1,10 @@
+language: generic
+
+sudo: required
+
+addons:
+  apt:
+    packages:
+      - libcurl4-openssl-dev
+
 script: ./build/createimage.sh

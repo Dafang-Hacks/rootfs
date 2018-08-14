@@ -1,0 +1,40 @@
+#!/bin/sh
+
+status()
+{
+  if [ -f /etc/autostart/sound-on-startup ]; then
+    echo "enabled"
+  fi
+}
+
+start()
+{
+  UPTIME=$( sed 's/\..*//g' < /proc/uptime )
+
+  if [ ! -f /etc/autostart/sound-on-startup ] && [ "${UPTIME}" -gt 60 ] ; then
+    echo "#!/bin/sh" > "/etc/autostart/sound-on-startup"
+    echo "/usr/controlscripts/sound-on-startup" >> "/etc/autostart/sound-on-startup"
+    echo "enabling sound on startup"
+  fi
+
+  # Don't play sound on activation
+  if [ "${UPTIME}" -lt 60 ]; then
+    /usr/bin/audioplay /media/police.wav &
+    echo "Please configure this option at least 1 minute after system startup"
+  fi
+}
+
+stop()
+{
+  echo "disabling sound on startup"
+  rm /etc/autostart/sound-on-startup
+}
+
+if [ $# -eq 0 ]; then
+  start
+else
+  case $1 in start|stop|status)
+    $1
+    ;;
+  esac
+fi

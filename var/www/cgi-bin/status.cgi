@@ -7,7 +7,7 @@ echo ""
 
 # source header.cgi
 
-mount|grep "/system/sdcard"|grep "rw,">/dev/null
+mount|grep "/"|grep "rw,">/dev/null
 
 if [ $? == 1 ]; then
 
@@ -57,7 +57,7 @@ cat << EOF
             <div class="field-body">
                 <div class="field">
                     <div class="control">
-                        <input class="input" id="ntp_srv" name="ntp_srv" type="text" size="25" value="$(cat /system/sdcard/config/ntp_srv.conf)" />
+                        <input class="input" id="ntp_srv" name="ntp_srv" type="text" size="25" value="$(cat /etc/ntp_srv.conf)" />
                     </div>
                 </div>
             </div>
@@ -125,7 +125,7 @@ cat << EOF
 <div class='card status_card'>
     <header class='card-header'><p class='card-header-title'>Version (last commit date from GitHub/autoupdate script)</p></header>
     <div class='card-content'>
-    <p>$(cat /system/sdcard/.lastCommitDate)</p>
+    <p>$(cat /.lastCommitDate)</p>
     </div>
 </div>
 
@@ -204,13 +204,13 @@ cat << EOF
                 <div class="control">
                     <div class="select">
                         <select class="select" name="avg">
-                            <option value="1" $(if [ "$(sed s/AVG=// /system/sdcard/config/ldr-average.conf)" -eq 1 ]; then echo selected; fi)>1</option>
-                            <option value="2" $(if [ "$(sed s/AVG=// /system/sdcard/config/ldr-average.conf)" -eq 2 ]; then echo selected; fi)>2</option>
-                            <option value="3" $(if [ "$(sed s/AVG=// /system/sdcard/config/ldr-average.conf)" -eq 3 ]; then echo selected; fi)>3</option>
-                            <option value="4" $(if [ "$(sed s/AVG=// /system/sdcard/config/ldr-average.conf)" -eq 4 ]; then echo selected; fi)>4</option>
-                            <option value="5" $(if [ "$(sed s/AVG=// /system/sdcard/config/ldr-average.conf)" -eq 5 ]; then echo selected; fi)>5</option>
-                            <option value="10" $(if [ "$(sed s/AVG=// /system/sdcard/config/ldr-average.conf)" -eq 10 ]; then echo selected; fi)>10</option>
-                            <option value="15" $(if [ "$(sed s/AVG=// /system/sdcard/config/ldr-average.conf)" -eq 15 ]; then echo selected; fi)>15</option>
+                            <option value="1" $(if [ "$(sed s/AVG=// /etc/ldr-average.conf)" -eq 1 ]; then echo selected; fi)>1</option>
+                            <option value="2" $(if [ "$(sed s/AVG=// /etc/ldr-average.conf)" -eq 2 ]; then echo selected; fi)>2</option>
+                            <option value="3" $(if [ "$(sed s/AVG=// /etc/ldr-average.conf)" -eq 3 ]; then echo selected; fi)>3</option>
+                            <option value="4" $(if [ "$(sed s/AVG=// /etc/ldr-average.conf)" -eq 4 ]; then echo selected; fi)>4</option>
+                            <option value="5" $(if [ "$(sed s/AVG=// /etc/ldr-average.conf)" -eq 5 ]; then echo selected; fi)>5</option>
+                            <option value="10" $(if [ "$(sed s/AVG=// /etc/ldr-average.conf)" -eq 10 ]; then echo selected; fi)>10</option>
+                            <option value="15" $(if [ "$(sed s/AVG=// /etc/ldr-average.conf)" -eq 15 ]; then echo selected; fi)>15</option>
                         </select>
                     </div>
                 </div>
@@ -299,9 +299,9 @@ cat << EOF
                 <div class="select">
                     <select name="audioSource">
                         $(
-                           for i in `/system/sdcard/bin/busybox find /usr/share/notify/ /system/sdcard/Media -name *.wav`
+                           for i in `busybox find /media/ -name *.wav`
                            do
-                                echo  "<option value=$i> `/system/sdcard/bin/busybox basename $i` </option>"
+                                echo  "<option value=$i> `busybox basename $i` </option>"
                            done
                         )
                     </select>
@@ -344,7 +344,7 @@ cat << EOF
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input class="input" id="videouser" name="videouser" type="text" size="12" value="$(source /system/sdcard/config/rtspserver.conf; echo $USERNAME)" />
+                                    <input class="input" id="videouser" name="videouser" type="text" size="12" value="$(source /etc/rtspserver.conf; echo $USERNAME)" />
                                 </div>
                             </div>
                         </div>
@@ -357,7 +357,7 @@ cat << EOF
                         </div>
                         <div class="field">
                             <div class="control">
-                                <input class="input" id="videopassword" name="videopassword" type="password" size="12" value="$(source /system/sdcard/config/rtspserver.conf; echo $USERPASSWORD)" />
+                                <input class="input" id="videopassword" name="videopassword" type="password" size="12" value="$(source /etc/rtspserver.conf; echo $USERPASSWORD)" />
                             </div>
                         </div>
                     </div>
@@ -369,7 +369,7 @@ cat << EOF
                     </div>
                     <div class="field">
                         <div class="control">
-                            <input class="input" id="videoport" name="videoport" type="number" size="12" value=$(source /system/sdcard/config/rtspserver.conf; echo $PORT) />
+                            <input class="input" id="videoport" name="videoport" type="number" size="12" value=$(source /etc/rtspserver.conf; echo $PORT) />
                         </div>
                     </div>
                     <span class="help">
@@ -391,11 +391,11 @@ cat << EOF
                         <div class="control">
                             <div class="select">
                                 <select name="video_size">
-                                <option value="-W640 -H360" $(if [ "$(cat /system/sdcard/config/rtspserver.conf | grep '^RTSPH264OPTS="-W640')" != "" ]; then echo selected; fi)>640x360</option>
-                                <option value="-W960 -H540" $(if [ "$(cat /system/sdcard/config/rtspserver.conf | grep '^RTSPH264OPTS="-W960')" != "" ]; then echo selected; fi)>960x540</option>
-                                <option value="-W1280 -H720" $(if [ "$(cat /system/sdcard/config/rtspserver.conf | grep '^RTSPH264OPTS="-W1280')" != "" ]; then echo selected; fi)>1280x720</option>
-                                <option value="-W1600 -H900" $(if [ "$(cat /system/sdcard/config/rtspserver.conf | grep '^RTSPH264OPTS="-W1600')" != "" ]; then echo selected; fi)>1600x900</option>
-                                <option value="-W1920 -H1080" $(if [ "$(cat /system/sdcard/config/rtspserver.conf | grep '^RTSPH264OPTS="-W1920')" != "" ]; then echo selected; fi)>1920x1080</option>
+                                <option value="-W640 -H360" $(if [ "$(cat /etc/rtspserver.conf | grep '^RTSPH264OPTS="-W640')" != "" ]; then echo selected; fi)>640x360</option>
+                                <option value="-W960 -H540" $(if [ "$(cat /etc/rtspserver.conf | grep '^RTSPH264OPTS="-W960')" != "" ]; then echo selected; fi)>960x540</option>
+                                <option value="-W1280 -H720" $(if [ "$(cat /etc/rtspserver.conf | grep '^RTSPH264OPTS="-W1280')" != "" ]; then echo selected; fi)>1280x720</option>
+                                <option value="-W1600 -H900" $(if [ "$(cat /etc/rtspserver.conf | grep '^RTSPH264OPTS="-W1600')" != "" ]; then echo selected; fi)>1600x900</option>
+                                <option value="-W1920 -H1080" $(if [ "$(cat /etc/rtspserver.conf | grep '^RTSPH264OPTS="-W1920')" != "" ]; then echo selected; fi)>1920x1080</option>
                                 </select>
                             </div>
                         </div>
@@ -412,10 +412,10 @@ cat << EOF
                             <div class="select">
                                 <select name="video_format">
                                 0 = FixedQp, 1 = CBR, 2 = VBR, 3 = SMART
-                                <option value="0" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $VIDEOFORMAT | grep -w 0)" != "" ]; then echo selected; fi)>FixedQp</option>
-                                <option value="1" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $VIDEOFORMAT | grep -w 1)" != "" ]; then echo selected; fi)>CBR</option>
-                                <option value="2" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $VIDEOFORMAT | grep -w 2)" != "" ]; then echo selected; fi)>VBR</option>
-                                <option value="3" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $VIDEOFORMAT | grep -w 3)" != "" ]; then echo selected; fi)>SMART</option>
+                                <option value="0" $(source /etc/rtspserver.conf; if [ "$(echo $VIDEOFORMAT | grep -w 0)" != "" ]; then echo selected; fi)>FixedQp</option>
+                                <option value="1" $(source /etc/rtspserver.conf; if [ "$(echo $VIDEOFORMAT | grep -w 1)" != "" ]; then echo selected; fi)>CBR</option>
+                                <option value="2" $(source /etc/rtspserver.conf; if [ "$(echo $VIDEOFORMAT | grep -w 2)" != "" ]; then echo selected; fi)>VBR</option>
+                                <option value="3" $(source /etc/rtspserver.conf; if [ "$(echo $VIDEOFORMAT | grep -w 3)" != "" ]; then echo selected; fi)>SMART</option>
                                 </select>
                             </div>
                         </div>
@@ -431,7 +431,7 @@ cat << EOF
 
                     <div class="field">
                         <div class="control">
-                            <input class="input" id="frmRateNum" name="frmRateNum" type="text" size="5" value="$(source /system/sdcard/config/rtspserver.conf; echo $FRAMERATE_NUM)" placeholder="25"/>
+                            <input class="input" id="frmRateNum" name="frmRateNum" type="text" size="5" value="$(source /etc/rtspserver.conf; echo $FRAMERATE_NUM)" placeholder="25"/>
                         </div>
                     </div>
                     <div class="field-label is-horizontal">
@@ -439,7 +439,7 @@ cat << EOF
                     </div>
                       <div class="field">
                         <div class="control">
-                            <input class="input" id="frmRateDen" name="frmRateDen" type="text" size=5 value="$(source /system/sdcard/config/rtspserver.conf; echo $FRAMERATE_DEN)"  placeholder="1" />
+                            <input class="input" id="frmRateDen" name="frmRateDen" type="text" size=5 value="$(source /etc/rtspserver.conf; echo $FRAMERATE_DEN)"  placeholder="1" />
                         </div>
                     </div>
 
@@ -457,7 +457,7 @@ cat << EOF
                 <div class="field-body">
                     <div class="field">
                         <div class="control">
-                            <input class="input" id="brbitrate" name="brbitrate" type="text" size="5" value="$(/system/sdcard/bin/setconf -g b)"/> kbps
+                            <input class="input" id="brbitrate" name="brbitrate" type="text" size="5" value="$(setconf -g b)"/> kbps
                         </div>
                     </div>
                 </div>
@@ -488,9 +488,9 @@ EOF
 PATH="/bin:/sbin:/usr/bin:/media/mmcblk0p2/data/bin:/media/mmcblk0p2/data/sbin:/media/mmcblk0p2/data/usr/bin"
 
 IP=$(ifconfig wlan0 |grep "inet addr" |awk '{print $2}' |awk -F: '{print $2}')
-echo "<p>Path to feed : <a href='rtsp://$IP:$(source /system/sdcard/config/rtspserver.conf; echo $PORT)/unicast'>rtsp://$IP:$(source /system/sdcard/config/rtspserver.conf; echo $PORT)/unicast</a></p>"
-echo "<p>HLS : <a href='http://$IP:$(source /system/sdcard/config/rtspserver.conf; echo $PORT)/unicast.m3u8'>http://$IP:$(source /system/sdcard/config/rtspserver.conf; echo $PORT)/unicast.m3u8</a></p>"
-echo "<p>MPEG-DASH : <a href='http://$IP:$(source /system/sdcard/config/rtspserver.conf; echo $PORT)/unicast.mpd'>http://$IP:$(source /system/sdcard/config/rtspserver.conf; echo $PORT)/unicast.mpd</a></p>"
+echo "<p>Path to feed : <a href='rtsp://$IP:$(source /etc/rtspserver.conf; echo $PORT)/unicast'>rtsp://$IP:$(source /etc/rtspserver.conf; echo $PORT)/unicast</a></p>"
+echo "<p>HLS : <a href='http://$IP:$(source /etc/rtspserver.conf; echo $PORT)/unicast.m3u8'>http://$IP:$(source /etc/rtspserver.conf; echo $PORT)/unicast.m3u8</a></p>"
+echo "<p>MPEG-DASH : <a href='http://$IP:$(source /etc/rtspserver.conf; echo $PORT)/unicast.mpd'>http://$IP:$(source /etc/rtspserver.conf; echo $PORT)/unicast.mpd</a></p>"
 
 cat << EOF
     </div>
@@ -507,7 +507,7 @@ EOF
 PATH="/bin:/sbin:/usr/bin:/media/mmcblk0p2/data/bin:/media/mmcblk0p2/data/sbin:/media/mmcblk0p2/data/usr/bin"
 
 IP=$(ifconfig wlan0 |grep "inet addr" |awk '{print $2}' |awk -F: '{print $2}')
-echo "<p>Path to feed : <a href='rtsp://$IP:$(source /system/sdcard/config/rtspserver.conf; echo $PORT)/unicast'>rtsp://$IP:$(source /system/sdcard/config/rtspserver.conf; echo $PORT)/unicast</a></p>"
+echo "<p>Path to feed : <a href='rtsp://$IP:$(source /etc/rtspserver.conf; echo $PORT)/unicast'>rtsp://$IP:$(source /etc/rtspserver.conf; echo $PORT)/unicast</a></p>"
 
 cat << EOF
     </div>
@@ -529,11 +529,11 @@ cat << EOF
                         <div class="field-body">
                             <div class="select">
                                 <select name="audioinFormat">
-                                       <option value="OFF" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep OFF)" != "" ]; then echo selected; fi)>OFF</option>
-                                       <option value="OPUS" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep OPUS)" != "" ]; then echo selected; fi)>OPUS</option>
-                                       <option value="PCM"  $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep -w PCM)" != "" ]; then echo selected; fi)>PCM</option>
-                                       <option value="PCMU" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep -w PCMU)" != "" ]; then echo selected; fi)>PCMU</option>
-                                       <option value="MP3" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep -w MP3)" != "" ]; then echo selected; fi)>MP3</option>
+                                       <option value="OFF" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep OFF)" != "" ]; then echo selected; fi)>OFF</option>
+                                       <option value="OPUS" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep OPUS)" != "" ]; then echo selected; fi)>OPUS</option>
+                                       <option value="PCM"  $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep -w PCM)" != "" ]; then echo selected; fi)>PCM</option>
+                                       <option value="PCMU" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep -w PCMU)" != "" ]; then echo selected; fi)>PCMU</option>
+                                       <option value="MP3" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOFORMAT | grep -w MP3)" != "" ]; then echo selected; fi)>MP3</option>
                                 </select>
                             </div>
                             <span class="help">
@@ -550,11 +550,11 @@ cat << EOF
                         <div class="field-body">
                                 <div class="select">
                                     <select name="audioinBR">
-                                           <option value="8000"  $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep 8000)" != "" ]; then echo selected; fi)>8000</option>
-                                           <option value="16000" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep 16000)" != "" ]; then echo selected; fi)>16000</option>
-                                           <option value="24000" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep -w 24000)" != "" ]; then echo selected; fi)>24000</option>
-                                           <option value="44100" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep -w 44100)" != "" ]; then echo selected; fi)>44100</option>
-                                           <option value="48000" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep -w 48000)" != "" ]; then echo selected; fi)>48000</option>
+                                           <option value="8000"  $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep 8000)" != "" ]; then echo selected; fi)>8000</option>
+                                           <option value="16000" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep 16000)" != "" ]; then echo selected; fi)>16000</option>
+                                           <option value="24000" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep -w 24000)" != "" ]; then echo selected; fi)>24000</option>
+                                           <option value="44100" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep -w 44100)" != "" ]; then echo selected; fi)>44100</option>
+                                           <option value="48000" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOINBR | grep -w 48000)" != "" ]; then echo selected; fi)>48000</option>
                                     </select>
                                 </div>
                                 <span class="help">
@@ -570,13 +570,13 @@ cat << EOF
                         <div class="field-body">
                             <div class="select">
                                 <select name="audioinFilter">
-                                       <option value="0" $(if [ "$(/system/sdcard/bin/setconf -g q)" == "0" ]; then echo selected; fi)>No filter</option>
-                                       <option value="1" $(if [ "$(/system/sdcard/bin/setconf -g q)" == "1" ]; then echo selected; fi)>Filter 1</option>
-                                       <option value="2" $(if [ "$(/system/sdcard/bin/setconf -g q)" == "2" ]; then echo selected; fi)>Filter 2</option>
-                                       <option value="3" $(if [ "$(/system/sdcard/bin/setconf -g q)" == "3" ]; then echo selected; fi)>NS Filter LOW</option>
-                                       <option value="4" $(if [ "$(/system/sdcard/bin/setconf -g q)" == "4" ]; then echo selected; fi)>NS Filter MODERATE</option>
-                                       <option value="5" $(if [ "$(/system/sdcard/bin/setconf -g q)" == "5" ]; then echo selected; fi)>NS Filter HIGH</option>
-                                       <option value="6" $(if [ "$(/system/sdcard/bin/setconf -g q)" == "6" ]; then echo selected; fi)>NS Filter VERY HIGH</option>
+                                       <option value="0" $(if [ "$(setconf -g q)" == "0" ]; then echo selected; fi)>No filter</option>
+                                       <option value="1" $(if [ "$(setconf -g q)" == "1" ]; then echo selected; fi)>Filter 1</option>
+                                       <option value="2" $(if [ "$(setconf -g q)" == "2" ]; then echo selected; fi)>Filter 2</option>
+                                       <option value="3" $(if [ "$(setconf -g q)" == "3" ]; then echo selected; fi)>NS Filter LOW</option>
+                                       <option value="4" $(if [ "$(setconf -g q)" == "4" ]; then echo selected; fi)>NS Filter MODERATE</option>
+                                       <option value="5" $(if [ "$(setconf -g q)" == "5" ]; then echo selected; fi)>NS Filter HIGH</option>
+                                       <option value="6" $(if [ "$(setconf -g q)" == "6" ]; then echo selected; fi)>NS Filter VERY HIGH</option>
                                 </select>
                             </div>
                         </div>
@@ -588,7 +588,7 @@ cat << EOF
                         <div class="field-body">
                             <p class="control">
                                 <div class="double">
-                                    <input type="checkbox" name="HFEnabled" value="enabled" $(if [ "$(/system/sdcard/bin/setconf -g l)" == "true" ]; then echo checked; fi)/>
+                                    <input type="checkbox" name="HFEnabled" value="enabled" $(if [ "$(setconf -g l)" == "true" ]; then echo checked; fi)/>
                                 </div>
                             </p>
                         </div>
@@ -602,11 +602,11 @@ cat << EOF
                             <div class="field-body">
                                 <div class="select">
                                     <select name="audiooutBR">
-                                           <option value="8000"  $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep 8000)" != "" ]; then echo selected; fi)>8000</option>
-                                           <option value="16000" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep 16000)" != "" ]; then echo selected; fi)>16000</option>
-                                           <option value="24000" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep -w 24000)" != "" ]; then echo selected; fi)>24000</option>
-                                           <option value="44100" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep -w 44100)" != "" ]; then echo selected; fi)>44100</option>
-                                           <option value="48000" $(source /system/sdcard/config/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep -w 48000)" != "" ]; then echo selected; fi)>48000</option>
+                                           <option value="8000"  $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep 8000)" != "" ]; then echo selected; fi)>8000</option>
+                                           <option value="16000" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep 16000)" != "" ]; then echo selected; fi)>16000</option>
+                                           <option value="24000" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep -w 24000)" != "" ]; then echo selected; fi)>24000</option>
+                                           <option value="44100" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep -w 44100)" != "" ]; then echo selected; fi)>44100</option>
+                                           <option value="48000" $(source /etc/rtspserver.conf; if [ "$(echo $AUDIOOUTBR | grep -w 48000)" != "" ]; then echo selected; fi)>48000</option>
                                     </select>
                                 </div>
 
@@ -617,7 +617,7 @@ cat << EOF
                         <div class="field-label is-normal">
                             <label class="label">Volume</label>
                         </div>
-                        <input class="slider is-fullwidth" name="audioinVol" step="1" min="-1" max="120" value="$(/system/sdcard/bin/setconf -g h)" type="range">
+                        <input class="slider is-fullwidth" name="audioinVol" step="1" min="-1" max="120" value="$(setconf -g h)" type="range">
                     </div>
                     <br><br>
                     <div class="field is-horizontal">
@@ -627,7 +627,7 @@ cat << EOF
                         <div class="field-body">
                             <p class="control">
                                 <div class="double">
-                                    <input type="checkbox" name="AECEnabled" value="enabled" $(if [ "$(/system/sdcard/bin/setconf -g a)" == "true" ]; then echo checked; fi)/>
+                                    <input type="checkbox" name="AECEnabled" value="enabled" $(if [ "$(setconf -g a)" == "true" ]; then echo checked; fi)/>
                                 </div>
                             </p>
                         </div>
@@ -655,10 +655,10 @@ cat << EOF
                 <div class="field-body">
                     <div class="field is-grouped">
                         <p class="control">
-                            <input type="checkbox" name="OSDenable" value="enabled" $(if [ -f /system/sdcard/config/osd.conf ]; then echo checked; fi) />
+                            <input type="checkbox" name="OSDenable" value="enabled" $(if [ -f /etc/osd.conf ]; then echo checked; fi) />
                         </p>
                         <p class="control">
-                            <input class="input" id="osdtext" name="osdtext" type="text" size="25" value="$(source /system/sdcard/config/osd.conf && echo "$OSD")"/>
+                            <input class="input" id="osdtext" name="osdtext" type="text" size="25" value="$(source /etc/osd.conf && echo "$OSD")"/>
                             <span class="help">
                                 Enter time-variables in <a href="http://strftime.org/" target="_blank">strftime</a> format
                             </span>
@@ -673,7 +673,7 @@ cat << EOF
                 <div class="field-body">
                     <div class="field is-grouped">
                         <p class="control">
-                            <input type="checkbox" name="AXISenable" value="enabled" $(if [[ "$(grep DISPLAY_AXIS /system/sdcard/config/osd.conf | sed s/DISPLAY_AXIS=//)" == "true" ]];then echo checked; fi) />
+                            <input type="checkbox" name="AXISenable" value="enabled" $(if [[ "$(grep DISPLAY_AXIS /etc/osd.conf | sed s/DISPLAY_AXIS=//)" == "true" ]];then echo checked; fi) />
                         </p>
                     </div>
                 </div>
@@ -687,14 +687,14 @@ cat << EOF
                         <div class="control">
                             <div class="select">
                                 <select name="color">
-                                <option value="0" $(if [ "$(grep COLOR /system/sdcard/config/osd.conf | sed s/COLOR=//)" -eq 0 ]; then echo selected; fi)>White</option>
-                                <option value="1" $(if [ "$(grep COLOR /system/sdcard/config/osd.conf | sed s/COLOR=//)" -eq 1 ]; then echo selected; fi)>Black</option>
-                                <option value="2" $(if [ "$(grep COLOR /system/sdcard/config/osd.conf | sed s/COLOR=//)" -eq 2 ]; then echo selected; fi)>Red</option>
-                                <option value="3" $(if [ "$(grep COLOR /system/sdcard/config/osd.conf | sed s/COLOR=//)" -eq 3 ]; then echo selected; fi)>Green</option>
-                                <option value="4" $(if [ "$(grep COLOR /system/sdcard/config/osd.conf | sed s/COLOR=//)" -eq 4 ]; then echo selected; fi)>Blue</option>
-                                <option value="5" $(if [ "$(grep COLOR /system/sdcard/config/osd.conf | sed s/COLOR=//)" -eq 5 ]; then echo selected; fi)>Cyan</option>
-                                <option value="6" $(if [ "$(grep COLOR /system/sdcard/config/osd.conf | sed s/COLOR=//)" -eq 6 ]; then echo selected; fi)>Yellow</option>
-                                <option value="7" $(if [ "$(grep COLOR /system/sdcard/config/osd.conf | sed s/COLOR=//)" -eq 7 ]; then echo selected; fi)>Purple</option>
+                                <option value="0" $(if [ "$(grep COLOR /etc/osd.conf | sed s/COLOR=//)" -eq 0 ]; then echo selected; fi)>White</option>
+                                <option value="1" $(if [ "$(grep COLOR /etc/osd.conf | sed s/COLOR=//)" -eq 1 ]; then echo selected; fi)>Black</option>
+                                <option value="2" $(if [ "$(grep COLOR /etc/osd.conf | sed s/COLOR=//)" -eq 2 ]; then echo selected; fi)>Red</option>
+                                <option value="3" $(if [ "$(grep COLOR /etc/osd.conf | sed s/COLOR=//)" -eq 3 ]; then echo selected; fi)>Green</option>
+                                <option value="4" $(if [ "$(grep COLOR /etc/osd.conf | sed s/COLOR=//)" -eq 4 ]; then echo selected; fi)>Blue</option>
+                                <option value="5" $(if [ "$(grep COLOR /etc/osd.conf | sed s/COLOR=//)" -eq 5 ]; then echo selected; fi)>Cyan</option>
+                                <option value="6" $(if [ "$(grep COLOR /etc/osd.conf | sed s/COLOR=//)" -eq 6 ]; then echo selected; fi)>Yellow</option>
+                                <option value="7" $(if [ "$(grep COLOR /etc/osd.conf | sed s/COLOR=//)" -eq 7 ]; then echo selected; fi)>Purple</option>
                                 </select>
                             </div>
                         </div>
@@ -710,8 +710,8 @@ cat << EOF
                         <div class="control">
                             <div class="select">
                                 <select name="size">
-                                <option value="0" $(if [ "$(grep SIZE /system/sdcard/config/osd.conf | sed s/SIZE=//)" -eq 0 ]; then echo selected; fi)>Small</option>
-                                <option value="1" $(if [ "$(grep SIZE /system/sdcard/config/osd.conf | sed s/SIZE=//)" -eq 1 ]; then echo selected; fi)>Bigger</option>
+                                <option value="0" $(if [ "$(grep SIZE /etc/osd.conf | sed s/SIZE=//)" -eq 0 ]; then echo selected; fi)>Small</option>
+                                <option value="1" $(if [ "$(grep SIZE /etc/osd.conf | sed s/SIZE=//)" -eq 1 ]; then echo selected; fi)>Bigger</option>
                                 </select>
                             </div>
                         </div>
@@ -725,7 +725,7 @@ cat << EOF
                 <div class="field-body">
                     <div class="field">
                         <p class="control">
-                            <input class="input" id="spacepixels" name="spacepixels" type="number" size="4" value="$(source /system/sdcard/config/osd.conf && echo "$SPACE")"/>
+                            <input class="input" id="spacepixels" name="spacepixels" type="number" size="4" value="$(source /etc/osd.conf && echo "$SPACE")"/>
                         </p>
                         <p class="help">Can be negative</p>
                     </div>
@@ -738,7 +738,7 @@ cat << EOF
                 <div class="field-body">
                     <div class="field">
                         <p class="control">
-                            <input class="input" id="posy" name="posy" type="number" size="6" value="$(source /system/sdcard/config/osd.conf && echo "$POSY")"/>
+                            <input class="input" id="posy" name="posy" type="number" size="6" value="$(source /etc/osd.conf && echo "$POSY")"/>
                         </p>
                     </div>
                 </div>
@@ -753,8 +753,8 @@ cat << EOF
                         <div class="control">
                             <div class="select">
                                 <select name="fixedw">
-                                <option value="0" $(if [ "$(grep FIXEDW /system/sdcard/config/osd.conf | sed s/FIXEDW=//)" -eq 0 ]; then echo selected; fi)>No</option>
-                                <option value="1" $(if [ "$(grep FIXEDW /system/sdcard/config/osd.conf | sed s/FIXEDW=//)" -eq 1 ]; then echo selected; fi)>Yes</option>
+                                <option value="0" $(if [ "$(grep FIXEDW /etc/osd.conf | sed s/FIXEDW=//)" -eq 0 ]; then echo selected; fi)>No</option>
+                                <option value="1" $(if [ "$(grep FIXEDW /etc/osd.conf | sed s/FIXEDW=//)" -eq 1 ]; then echo selected; fi)>Yes</option>
                                 </select>
                             </div>
                         </div>
@@ -798,7 +798,7 @@ cat << EOF
             <div class="field-body">
                 <div class="field">
                     <div class="control">
-                        <input class="input" id="tlinterval" name="tlinterval" type="text" size="5" value="$(source /system/sdcard/config/timelapse.conf && echo "$TIMELAPSE_INTERVAL")"/> seconds
+                        <input class="input" id="tlinterval" name="tlinterval" type="text" size="5" value="$(source /etc/timelapse.conf && echo "$TIMELAPSE_INTERVAL")"/> seconds
                     </div>
                 </div>
             </div>
@@ -810,7 +810,7 @@ cat << EOF
             <div class="field-body">
                 <div class="field">
                     <div class="control">
-                        <input class="input" id="tlduration" name="tlduration" type="text" size="5" value="$(source /system/sdcard/config/timelapse.conf && echo "$TIMELAPSE_DURATION")"/> minutes
+                        <input class="input" id="tlduration" name="tlduration" type="text" size="5" value="$(source /etc/timelapse.conf && echo "$TIMELAPSE_DURATION")"/> minutes
                     </div>
                     <p class="help">Set to 0 for unlimited</p>
                 </div>
@@ -856,5 +856,5 @@ cat << EOF
 </div>
 
 EOF
-script=$(cat /system/sdcard/www/scripts/status.cgi.js)
+script=$(cat /var/www/scripts/status.cgi.js)
 echo "<script>$script</script>"

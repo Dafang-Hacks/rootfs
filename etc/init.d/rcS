@@ -39,6 +39,15 @@ echo out > direction   #设置为输出模式
 echo 0 > active_low    #value是0,表示低电平。value是1,表示高电平
 echo 1 > value         #设置电平（输出模式）
 
+## Initialize the GPIOS:
+for pin in 25 26 38 39 49; do
+  init_gpio $pin
+done
+# the ir_led pin is a special animal and needs active low
+echo 1 > /sys/class/gpio/gpio49/active_low
+
+echo "Initialized gpios" >> $LOGPATH
+
 # Mount the params partition
 mount -t jffs2 /dev/mtdblock9 /params
 

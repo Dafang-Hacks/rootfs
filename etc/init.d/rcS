@@ -39,6 +39,15 @@ echo out > direction   #设置为输出模式
 echo 0 > active_low    #value是0,表示低电平。value是1,表示高电平
 echo 1 > value         #设置电平（输出模式）
 
+## Initialize the GPIOS:
+for pin in 25 26 38 39 49; do
+  init_gpio $pin
+done
+# the ir_led pin is a special animal and needs active low
+echo 1 > /sys/class/gpio/gpio49/active_low
+
+echo "Initialized gpios" >> $LOGPATH
+
 # Mount the params partition
 mount -t jffs2 /dev/mtdblock9 /params
 
@@ -101,7 +110,7 @@ bftpd_status=$(bftpd -d)
 echo "bftpd: $bftpd_status" >> $LOGPATH
 
 ## Create a certificate for the webserver
-if [ ! -f etc/lighttpd.pem ]; then
+if [ ! -f /etc/lighttpd.pem ]; then
   export OPENSSL_CONF=/etc/openssl.cnf
   openssl req -new -x509 -keyout /etc/lighttpd.pem -out /etc/lighttpd.pem -days 365 -nodes -subj "/C=DE/ST=Bavaria/L=Munich/O=.../OU=.../CN=.../emailAddress=..."
   chmod 400 /etc/lighttpd.pem
@@ -112,7 +121,7 @@ fi
 if [ ! -f /etc/lighttpd.conf ]; then
   cp /etc/lighttpd.conf.dist /etc/lighttpd.conf
 fi
-lighttpd_status=$(/system/sdcard/bin/lighttpd -f /system/sdcard/config/lighttpd.conf)
+lighttpd_status=$(lighttpd -f /etc/lighttpd.conf)
 echo "lighttpd: $lighttpd_status" >> $LOGPATH
 
 ## Configure OSD:

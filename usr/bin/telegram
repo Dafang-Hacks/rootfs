@@ -2,9 +2,9 @@
 what="$1"
 shift
 data="$@"
-CURL="/system/sdcard/bin/curl"
+CURL="curl"
 
-. /system/sdcard/config/telegram.conf
+. /etc/telegram.conf
 
 sendMessage() {
   text="$(echo "${@}" | sed 's:\\n:\n:g')"

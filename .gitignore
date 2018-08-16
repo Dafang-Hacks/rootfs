@@ -1,1 +1,7 @@
-.idea/*
+var/log/*
+var/run/*
+etc/*.conf
+.ash_history
+etc/dropbear/dropbear_ecdsa_host_key
+etc/lighttpd.pem
+etc/TZ

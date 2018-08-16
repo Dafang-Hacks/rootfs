@@ -1,5 +1,5 @@
 #!/bin/sh
-PIDFILE="/run/v4l2rtspserver-master-h264.pid"
+PIDFILE="/var/run/v4l2rtspserver-master-h264.pid"
 LOGDIR="/var/log"
 LOGPATH="$LOGDIR/v4l2rtspserver-master.log"
 

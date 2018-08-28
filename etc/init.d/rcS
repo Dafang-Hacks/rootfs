@@ -75,6 +75,12 @@ fi
 ntp_srv="$(cat "/etc/ntp_srv.conf")"
 busybox ntpd -p "$ntp_srv"
 
+## Install busybox and dropbear applets
+busybox --install
+[ ! -e /usr/bin/ssh ] && ln -s dropbearmulti /usr/bin/ssh
+[ ! -e /usr/bin/scp ] && ln -s dropbearmulti /usr/bin/scp
+[ ! -e /usr/bin/dropbear ] && ln -s dropbearmulti /usr/bin/dropbear
+
 # Start Motor:
 insmod /lib/modules/$KERNEL_VERSION/sample_motor.ko
 

@@ -126,7 +126,7 @@ if [ -n "$F_cmd" ]; then
     ;;
 
     motor_left)
-      motor -d l -s $F_val
+      /usr/bin/motor -d l -s $F_val
 
       # Waiting for the motor to run.
       SLEEP_NUM=$(awk -v a="$F_val" 'BEGIN{printf ("%f",a*1.3/1000)}')
@@ -137,7 +137,7 @@ if [ -n "$F_cmd" ]; then
     ;;
 
     motor_right)
-      motor -d r -s $F_val
+      /usr/bin/motor -d r -s $F_val
       # Waiting for the motor to run.
       SLEEP_NUM=$(awk -v a="$F_val" 'BEGIN{printf ("%f",a*1.3/1000)}')
       sleep ${SLEEP_NUM//-/}
@@ -147,7 +147,7 @@ if [ -n "$F_cmd" ]; then
     ;;
 
     motor_up)
-      motor -d u -s $F_val
+      /usr/bin/motor -d u -s $F_val
       # Waiting for the motor to run.
       SLEEP_NUM=$(awk -v a="$F_val" 'BEGIN{printf ("%f",a*1.3/1000)}')
       sleep ${SLEEP_NUM//-/}
@@ -157,7 +157,7 @@ if [ -n "$F_cmd" ]; then
     ;;
 
     motor_down)
-      motor -d d -s $F_val
+      /usr/bin/motor -d d -s $F_val
       # Waiting for the motor to run.
       SLEEP_NUM=$(awk -v a="$F_val" 'BEGIN{printf ("%f",a*1.3/1000)}')
       sleep ${SLEEP_NUM//-/}
@@ -167,7 +167,7 @@ if [ -n "$F_cmd" ]; then
     ;;
 
     motor_vcalibrate)
-      motor -d v -s 100
+      /usr/bin/motor -d v -s 100
     ;;
 
     motor_hcalibrate)
@@ -176,7 +176,7 @@ if [ -n "$F_cmd" ]; then
 
     motor_calibrate)
       # Current motor driver does not differentiate between horizontal and vertical calibration
-      motor -d h -s 100
+      /usr/bin/motor -d h -s 100
       # motor -d v -s 100
     ;;
 

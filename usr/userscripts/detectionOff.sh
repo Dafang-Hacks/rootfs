@@ -16,7 +16,7 @@ if [ "$publish_mqtt_message" = true ] ; then
 fi
 
 # Run any user scripts.
-for i in /usr/config/userscripts/motiondetection/*; do
+for i in /usr/local/bin/motiondetection/*; do
     if [ -x $i ]; then
         echo "Running: $i off"
         $i off

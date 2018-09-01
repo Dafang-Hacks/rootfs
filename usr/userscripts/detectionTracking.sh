@@ -93,7 +93,7 @@ backtoOrigin() {
 
 # If no argument that's mean the camera need to return to its original position
 # the 5th arguments is '&'
-if [ $# -ne 5 ]
+if [ $# -eq 5 ]
 then
     backtoOrigin
     return 0;
@@ -120,7 +120,7 @@ echo $3 $4
 # Only 2 are supported
 if [ $((${1} + ${2} + ${3} +${4})) -gt 2 ]
 then
-	echo "No move if more than 3 detected regions"
+    echo "No move if more than 3 detected regions"
     return 0
 fi
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Source your custom motion configurations
-. /usr/config/motion.conf
+. /etc/motion.conf
 . /usr/scripts/common_functions.sh
 
 # Turn on the amber led
@@ -24,7 +24,7 @@ fi
 
 # Publish a mqtt message
 if [ "$publish_mqtt_message" = true ] ; then
-	. /usr/config/mqtt.conf
+	. /etc/mqtt.conf
 	/usr/bin/mosquitto_pub.bin -h "$HOST" -p "$PORT" -u "$USER" -P "$PASS" -t "${TOPIC}"/motion ${MOSQUITTOOPTS} ${MOSQUITTOPUBOPTS} -m "ON"
 	if [ "$save_snapshot" = true ] ; then
 		/usr/bin/mosquitto_pub.bin -h "$HOST" -p "$PORT" -u "$USER" -P "$PASS" -t "${TOPIC}"/motion/snapshot ${MOSQUITTOOPTS} ${MOSQUITTOPUBOPTS} -f "$save_dir/$filename"

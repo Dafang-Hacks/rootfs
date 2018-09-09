@@ -5,8 +5,8 @@ echo "Pragma: no-cache"
 echo "Cache-Control: max-age=0, no-store, no-cache"
 echo ""
 
-source ./func.cgi
-source /usr/scripts/common_functions.sh
+. ./func.cgi
+. /usr/scripts/common_functions.sh
 
 if [ -n "$F_cmd" ]; then
   if [ -z "$F_val" ]; then

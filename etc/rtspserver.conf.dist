@@ -13,14 +13,14 @@ PORT=8554
 # RTSPH264OPTS="-W960 -H540"
 # To enable authentication:
 # RTSPH264OPTS="-U user:password"
-RTSPH264OPTS="-A"
+RTSPH264OPTS="-a"
 
 # MJPEG RTSP server options
 # Examples:
 # RTSPMJPEGOPTS="-W960 -H540"
 # To enable authentication:
 # RTSPMJPEGOPTS="-U user:password"
-RTSPMJPEGOPTS="-A"
+RTSPMJPEGOPTS="-a"
 
 # Video
 BITRATE=5000

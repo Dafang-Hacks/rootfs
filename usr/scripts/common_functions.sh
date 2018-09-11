@@ -156,31 +156,31 @@ motor(){
   fi
   case "$1" in
   up)
-    motor -d u -s "$steps"
+    /usr/bin/motor -d u -s "$steps"
     ;;
   down)
-    motor -d d -s "$steps"
+    /usr/bin/motor -d d -s "$steps"
     ;;
   left)
-    motor -d l -s "$steps"
+    /usr/bin/motor -d l -s "$steps"
     ;;
   right)
-    motor -d r -s "$steps"
+    /usr/bin/motor -d r -s "$steps"
     ;;
   vcalibrate)
-    motor -d v -s "$steps"
+    /usr/bin/motor -d v -s "$steps"
     ;;
   hcalibrate)
-    motor -d h -s "$steps"
+    /usr/bin/motor -d h -s "$steps"
     ;;
   calibrate)
-    motor -d f -s "$steps"
+    /usr/bin/motor -d f -s "$steps"
     ;;
   status)
     if [ "$2" = "horizontal" ]; then
-        echo $(motor -d u -s 0 | grep "x:" | awk  '{print $2}')
+        /usr/bin/motor -d u -s 0 | grep "x:" | awk  '{print $2}'
     else
-        echo $(motor -d u -s 0 | grep "y:" | awk  '{print $2}')
+        /usr/bin/motor -d r -s 0 | grep "y:" | awk  '{print $2}'
     fi
     ;;
   esac

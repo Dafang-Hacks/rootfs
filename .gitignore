@@ -5,3 +5,4 @@ etc/*.conf
 etc/dropbear/dropbear_ecdsa_host_key
 etc/lighttpd.pem
 etc/TZ
+.ssh/*

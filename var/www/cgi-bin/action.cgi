@@ -189,7 +189,7 @@ if [ -n "$F_cmd" ]; then
           if [ "$F_audioSource" == "" ]; then
               F_audioSource="/media/police.wav"
           fi
-          busybox nohup audioplay $F_audioSource $F_audiotestVol >> "/var/log/update.log" &
+          busybox nohup ossplay $F_audioSource -g$F_audiotestVol &
           echo  "Play $F_audioSource at volume $F_audiotestVol"
           return
     ;;

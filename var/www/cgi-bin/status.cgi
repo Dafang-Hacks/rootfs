@@ -831,14 +831,6 @@ cat << EOF
     </div>
 </div>
 
-<!-- Original Xiaomi Software -->
-<div class='card status_card'>
-    <header class='card-header'><p class='card-header-title'>Start original Xiaomi Software</p></header>
-    <div class='card-content'>
-        <button class="button" onClick="call('cgi-bin/action.cgi?cmd=xiaomi_start')">Start</button>
-    </div>
-</div>
-
 <!-- Process List -->
 <div class='card status_card'>
     <header class='card-header'><p class='card-header-title'>Process List</p></header>

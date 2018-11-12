@@ -9,11 +9,8 @@ fi
 
 # Set terminal env
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
-export PATH=/system/bin:$PATH
-export LD_LIBRARY_PATH=/system/lib
-export LD_LIBRARY_PATH=/thirdlib:$LD_LIBRARY_PATH
-export PATH=$PATH:/opt/bin:/opt/sbin
+export LD_LIBRARY_PATH=/lib
 #export TZ=UTC-8
 
-# Set directoty and file default create permission
+# Set directory and file default create permission
 umask 022

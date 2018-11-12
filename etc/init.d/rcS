@@ -8,24 +8,30 @@ echo /sbin/mdev > /proc/sys/kernel/hotplug
 #mknod -m 600 /dev/console c 5 1
 #mknod -m 666 /dev/null c 1 3
 
-# Set Global Environment
+# Setup the global environment
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export PATH=/system/bin:$PATH
 export PATH=$PATH:/opt/bin:/opt/sbin
 export LD_LIBRARY_PATH=/system/lib
 export LD_LIBRARY_PATH=/thirdlib:$LD_LIBRARY_PATH
+LOGPATH="/var/log/startup.log"
+
 
 # networking
 ifconfig lo up
-#ifconfig eth0 192.168.1.80
+# ifconfig eth0 192.168.1.80
 
-# Start telnet daemon
-telnetd &
+## Load some common functions:
+. /usr/scripts/common_functions.sh
+echo "Loaded common functions" >> $LOGPATH
+
+# Start the telnet daemon
+# telnetd &
 
 # Set the system time from the hardware clock
-#hwclock -s
+# hwclock -s
 
-#set the GPIO PC13 to high, make the USB Disk can be use
+# Set the GPIO PC13 to high, make the USB Disk can be use
 cd /sys/class/gpio
 echo 77 > export       #申请GPIO
 cd gpio77
@@ -33,28 +39,64 @@ echo out > direction   #设置为输出模式
 echo 0 > active_low    #value是0,表示低电平。value是1,表示高电平
 echo 1 > value         #设置电平（输出模式）
 
-# Mount params partition
+## Initialize the GPIOS:
+for pin in 25 26 38 39 49; do
+  init_gpio $pin
+done
+# the ir_led pin is a special animal and needs active low
+echo 1 > /sys/class/gpio/gpio49/active_low
+
+echo "Initialized gpios" >> $LOGPATH
+
+# Mount the params partition
 mount -t jffs2 /dev/mtdblock9 /params
 
 KERNEL_VERSION=$(uname -r)
 
 # Start Network:
-mount /dev/mmcblk0p1 /system/sdcard
 MAC=$(grep MAC < /params/config/.product_config | cut -c16-27 | sed 's/\(..\)/\1:/g;s/:$//')
 insmod /lib/modules/$KERNEL_VERSION/rtl8189es.ko rtw_initmac="$MAC"
-# insmod /lib/modules/3.10.14/rtl8189fs.ko rtw_initmac="$MAC" # Uncomment for XiaoFang s1 && Wyzecam V2
+# insmod /lib/modules/$KERNEL_VERSION/rtl8189fs.ko rtw_initmac="$MAC" # Uncomment for XiaoFang s1 && Wyzecam V2
 
 
-wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -P /var/run/wpa_supplicant.pid
-udhcpc -i wlan0 -p /var/run/udhcpc.pid -s /etc/udhcpc.script -b -x hostname:"$(hostname)"
+if [ ! -f /etc/wpa_supplicant.conf ]; then
+  echo "Warning: You have to configure wpa_supplicant in order to use wifi. Please see /etc/wpa_supplicant.conf.dist for further instructions."
+else
+  wpa_supplicant_status="$(wpa_supplicant -d -B -i wlan0 -c /etc/wpa_supplicant.conf -P /var/run/wpa_supplicant.pid)"
+  echo "wpa_supplicant: $wpa_supplicant_status" >> $LOGPATH
+  udhcpc_status=$(udhcpc -i wlan0 -p /var/run/udhcpc.pid -s /etc/udhcpc.script -b -x hostname:"$(hostname)")
+  echo "udhcpc: $udhcpc_status" >> $LOGPATH
+fi
+
+## Sync the via NTP:
+if [ ! -f /etc/ntp_srv.conf ]; then
+  cp /etc/ntp_srv.conf.dist /etc/ntp_srv.conf
+fi
+ntp_srv="$(cat "/etc/ntp_srv.conf")"
+busybox ntpd -p "$ntp_srv"
+
+## Install busybox and dropbear applets
+busybox --install
+[ ! -e /usr/bin/ssh ] && ln -s dropbearmulti /usr/bin/ssh
+[ ! -e /usr/bin/scp ] && ln -s dropbearmulti /usr/bin/scp
+[ ! -e /usr/bin/dropbear ] && ln -s dropbearmulti /usr/bin/dropbear
 
 # Start Motor:
 insmod /lib/modules/$KERNEL_VERSION/sample_motor.ko
+
+# Calibrate the motors for older models with endstops:
+# motor hcalibrate
+# motor vcalibrate
+
+# Calibrate the motors for newer models without endstops:
+# motor calibrate
 
 # Determine the image sensor model:
 insmod /lib/modules/$KERNEL_VERSION/sinfo.ko
 echo 1 >/proc/jz/sinfo/info
 sensor=$(grep -m1 -oE 'jxf[0-9]*$' /proc/jz/sinfo/info)
+echo "Determined image sensor model as $sensor" >> $LOGPATH
+
 
 # Start the image sensor:
 insmod /lib/modules/$KERNEL_VERSION/tx-isp.ko isp_clk=100000000
@@ -65,11 +107,42 @@ else
 fi
 
 # Start User Applications:
-bftpd -d
-dropbearmulti dropbear -R
-lighttpd -f /etc/lighttpd.conf
 
-# Disable motion:
-setconf -k m -v -1
-# Start RTSP-Server without Audio:
-v4l2rtspserver-master -A -W 1280 -H 960 &
+## Start FTP & SSH Server:
+dropbear_status=$(dropbearmulti dropbear -R)
+echo "dropbear: $dropbear_status" >> $LOGPATH
+
+bftpd_status=$(bftpd -d)
+echo "bftpd: $bftpd_status" >> $LOGPATH
+
+## Create a certificate for the webserver
+if [ ! -f /etc/lighttpd.pem ]; then
+  export OPENSSL_CONF=/etc/openssl.cnf
+  openssl req -new -x509 -keyout /etc/lighttpd.pem -out /etc/lighttpd.pem -days 365 -nodes -subj "/C=DE/ST=Bavaria/L=Munich/O=.../OU=.../CN=.../emailAddress=..."
+  chmod 400 /etc/lighttpd.pem
+  echo "Created new certificate for webserver" >> $LOGPATH
+fi
+
+## Start Webserver:
+if [ ! -f /etc/lighttpd.conf ]; then
+  cp /etc/lighttpd.conf.dist /etc/lighttpd.conf
+fi
+lighttpd_status=$(lighttpd -f /etc/lighttpd.conf)
+echo "lighttpd: $lighttpd_status" >> $LOGPATH
+
+## Configure OSD:
+if [ -f /usr/controlscripts/configureOsd ]; then
+    . /usr/controlscripts/configureOsd  2>/dev/null
+fi
+
+## Configure Motion:
+if [ -f /usr/controlscripts/configureMotion ]; then
+    . /usr/controlscripts/configureMotion  2>/dev/null
+fi
+
+## Autostart all enabled services:
+for i in /etc/autostart/*; do
+  $i
+done
+
+echo "Startup finished!" >> $LOGPATH

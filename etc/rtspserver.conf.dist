@@ -1,0 +1,44 @@
+#######################################################################
+# Edit this file and move it to /etc/rtspserver.conf #
+# if you need to add options, otherwise defaults will be used         #
+#######################################################################
+
+# Configure RTSP Servers
+# Use /usr/bin/v4l2rtspserver-master -h to see available options
+
+PORT=8554
+
+# H264 RTSP server options
+# Examples:
+# RTSPH264OPTS="-W960 -H540"
+# To enable authentication:
+# RTSPH264OPTS="-U user:password"
+RTSPH264OPTS="-a"
+
+# MJPEG RTSP server options
+# Examples:
+# RTSPMJPEGOPTS="-W960 -H540"
+# To enable authentication:
+# RTSPMJPEGOPTS="-U user:password"
+RTSPMJPEGOPTS="-a"
+
+# Video
+BITRATE=5000
+# Framerate
+FRAMERATE_DEN=1
+FRAMERATE_NUM=25
+# Video format: (0 = FixedQp, 1 = CBR, 2 = VBR, 3 = SMART, default = 2)
+VIDEOFORMAT=2
+
+# AudioFormat
+# Can be: OPUS | MP3 | PCM | PCMU
+AUDIOFORMAT=MP3
+# Audio sampling rate
+AUDIOINBR=16000
+# Audio streaming sampling rate
+AUDIOOUTBR=44100
+HWVOLUME=70
+SWVOLUME=-1
+FILTER=4
+HIGHPASSFILTER=ON
+AECFILTER=ON

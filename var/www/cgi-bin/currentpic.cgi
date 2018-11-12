@@ -2,4 +2,4 @@
 
 echo "Content-type: image/jpeg"
 echo ""
-getimage
+/usr/bin/getimage

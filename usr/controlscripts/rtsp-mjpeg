@@ -1,0 +1,109 @@
+#!/bin/sh
+PIDFILE="/run/v4l2rtspserver-master-mjpeg.pid"
+LOGDIR="/var/log"
+LOGPATH="$LOGDIR/v4l2rtspserver-master.log"
+
+if [ ! -f /etc/rtspserver.conf ]; then
+  cp /etc/rtspserver.conf.dist /etc/rtspserver.conf
+fi
+
+if [ -f /etc/rtspserver.conf ]; then
+  . /etc/rtspserver.conf
+fi
+
+if [ -f /etc/osd.conf ]; then
+  . /etc/osd.conf 2>/dev/null
+fi
+
+status()
+{
+  pid="$(cat "$PIDFILE" 2>/dev/null)"
+  if [ "$pid" ]; then
+    # Prints PID: $pid if exists and returns 0(no error) else returns 1(error condition)
+    kill -0 "$pid" >/dev/null && echo "PID: $pid" || return 1
+  fi
+}
+
+start()
+{
+  if [ "$(status)" != "" ]; then
+    echo "A v4l2rtspserver is already running, please stop it or reboot"
+  else
+    echo "Starting v4l2rtspserver-master with parameter -fMJPG"
+    /usr/controlscripts/rtsp-h264 stop
+
+    ## Configure OSD
+    if [ -f /usr/controlscripts/configureOsd ]; then
+      . /usr/controlscripts/configureOsd  2>/dev/null
+    fi
+
+    ## Configure Motion
+    if [ -f /usr/controlscripts/configureMotion ]; then
+      . /usr/controlscripts/configureMotion  2>/dev/null
+    fi
+    ## Bitrate
+    setconf -k b -v ${BITRATE} 2>/dev/null
+
+    ## Framerate
+    if [ "$FRAMERATE_DEN" != "" ] && [ "$FRAMERATE_NUM" != "" ]; then
+        setconf -k d -v "$FRAMERATE_NUM,$FRAMERATE_DEN" 2>/dev/null
+    fi
+
+    ## Audio
+    if [ "$AUDIOFORMAT" != "OFF" ] ; then
+        AUDIOPARAM="-E $AUDIOFORMAT:$AUDIOINBR:$AUDIOOUTBR"
+        setconf -k h -v "$HWVOLUME" 2>/dev/null
+        setconf -k i -v "$SWVOLUME" 2>/dev/null
+        setconf -k q -v "$FILTER" 2>/dev/null
+        setconf -k l -v "$HIGHPASSFILTER" 2>/dev/null
+        setconf -k a -v "$AECFILTER" 2>/dev/null
+    else
+        AUDIOPARAM="-A"
+    fi
+
+    ## Video format
+    if [ "$VIDEOFORMAT" != "" ]; then
+	    VIDEOFORMAT="-r $VIDEOFORMAT"
+    fi
+
+    ## UserName and password
+    if [ "$USERNAME" != "" ]; then
+        CREDENTIAL="-U $USERNAME:$USERPASSWORD"
+    fi
+
+    ## Port
+    if [ "$PORT" != "" ]; then
+        PORT="-P $PORT"
+    fi
+
+    ## FLIP
+    if [ "$FLIP" = "ON" ]; then
+        setconf -k f -v 1
+    elif [ "$FLIP" = "OFF" ]; then
+        bin/setconf -k f -v 0
+    fi
+
+    echo "================== START ===============" >> "$LOGPATH"
+    echo "v4l2rtspserver-master -fMJPG $RTSPMJPEGOPTS  $AUDIOPARAM $VIDEOFORMAT $CREDENTIAL $PORT" >> "$LOGPATH"
+    v4l2rtspserver-master -fMJPG $RTSPMJPEGOPTS  $AUDIOPARAM $VIDEOFORMAT $CREDENTIAL $PORT  2>> "$LOGPATH" >> "$LOGPATH" &
+    echo "$!" > "$PIDFILE"
+  fi
+}
+
+stop()
+{
+  pid="$(cat "$PIDFILE" 2>/dev/null)"
+  if [ "$pid" ]; then
+    kill "$pid"
+    rm "$PIDFILE" 1> /dev/null 2>&1
+  fi
+}
+
+if [ $# -eq 0 ]; then
+  start
+else
+  case $1 in start|stop|status)
+    $1
+    ;;
+  esac
+fi

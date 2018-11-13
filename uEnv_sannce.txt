@@ -1,6 +1,6 @@
 baudrate=115200
 bootargs=console=ttyS1,115200n8 mem=39M@0x0 ispmem=5M@0x2700000 rmem=20M@0x2c00000 init=/linuxrc root=/dev/mmcblk0p1 rootwait rootfstype=ext3 rw mtdparts=jz_sfc:256k(boot),2176k(kernel),3328k(root),2304k(system),64k(factory),64k(param)
-bootcmd=ext4load mmc 0:1 0x80600000 kernel.bin;bootm 0x80600000
+bootcmd=ext4load mmc 0:1 0x80600000 kernel-t10.lzma;bootm 0x80600000
 bootdelay=1
 ethact=Jz4775-9161
 ethaddr=00:11:22:33:44:55

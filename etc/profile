@@ -9,6 +9,7 @@ fi
 
 # Set terminal env
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export PATH=$PATH:/opt/bin:/opt/sbin
 export LD_LIBRARY_PATH=/lib
 #export TZ=UTC-8
 
